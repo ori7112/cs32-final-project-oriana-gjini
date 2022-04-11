@@ -75,3 +75,75 @@ Sources:
 <sup>1</sup> https://www.comed.com/AboutUs/Pages/CompanyInformation.aspx
 
 <sup>2</sup> https://www.comed.com/SmartEnergy/InnovationTechnology/Pages/RateOptions.aspx
+
+## Prototype Outline ##
+
+The scope of the project will remain as outlined in **The Computational Subtask**. We will have two major parts. **Part 1** is webscrapping, data collection, and data storage. This is where we go to ComEd's website, identify the link of interest, open this link, extract the data, and store the data. We will store a data for what the price of electricity is at what time. Then, **Part 2** is analysis of data and outputing on/off result. Based on the data stored of times and prices, we will do a comparison against a benchmark price. If the price is equal to or greater than the benchmark price, the output will be "off" to turn off the thermostat. If the price is below benchmark, the output will be "on", indicating the thermostat should be on.
+
+### Part 1: Webscrapping ###
+**Step 1:** Connect to URL of ComEd page.
+```
+import requests
+import urllib.request
+import time
+from bs4 import BeautifulSoup
+
+# designate website to collect data from
+url = 'https://hourlypricing.comed.com/hp-api/'
+
+# establish connection to website
+response = requests.get(url)
+
+# check that we get 'response 200' to ensure successful connection
+print(response) 
+```
+The last line `print(response)` is a check to make sure the connection was successful. When running this code, we get `<Response [200]>` which means we have successfully connected.
+
+**Step 2:** Parse HTML script to locate link of interest (link contains 5 min pricing data). Then, assign the link for use in next step.
+```
+# parse HTML and locate every 'a' which find every instance
+# of '<a' which is the tag for a link
+soup = BeautifulSoup(response.text, 'html.parser')
+soup.findAll('a')
+
+# show every code line that contains a link
+print(soup.findAll('a'))
+
+# assign the line with the link we want as link_tag
+link_tag = soup.findAll('a')[33]
+
+# show link_tag to verify this line contains the link we want
+print(link_tag)
+
+# specifically assign the link by identifying it from the HTML line
+link = link_tag['href']
+
+# show the link to make sure we have the right one
+print(link)
+
+```
+This portion correctly meets the 3 print statement checkpoints. The first print `print(soup.findAll('a'))` produces every link from the website's HTML. The second print `print(link_tag)` correctly gives the HTML line that contains the link of interest. Finally, the third print `print(link)` takes the link of interest out of the HTML line. We get `https://hourlypricing.comed.com/api?type=5minutefeed&format=text` printed and this is the link we want to extract data from.
+
+**Step 3:** Open the link to the 5 min pricing data. Reproduce all the data so it is ready for analysis. The link should be opened every 5 minutes to extract the updated data.
+```
+#PLACE EVERYTHING IN A LOOP
+
+# every 5 min start at the beginning of the loop -- use time.sleep 
+
+# open the link, access data, print data
+f = urlopen(link)
+myfile = f.read()
+print(myfile)
+
+# delete all data in previously created array (array should be created before loop)
+# store new data into an array
+   # data comes in a set of UTC millis and price, and should be stored accordingly
+
+```
+Currently, the code above prints all the data from the file once. **Step 3** needs to incorporate a loop to access the link with the data every 5 min (5 min is how often the link is updated with new data). Every 5 min, the new data will go into an array for storage and any previous data will be deleted. Now that we have our necessary data stored, we will be able to analyze in **Part 2**.
+
+### Part 2: Data Analysis ###
+
+In **Part 2**, we will do comparison tests with the data we stored in **Part 1**. Specifically, every 5 min when new data comes in, we will conduct a test with a threshold price value. If the price at the most recent time recorded is *at or above* a benchmark value, the output will be "off" indicating the thermostat should be turned off. If a real thermostat was connected, this output would signal for the thermostat to be turned off automatically. If the price at the most recent time recorded is *below* a benchmark value, the output will be "on". 
+
+The code can utilize `pop` to take the last value in the array and use it in a series of if/elif/else blocks to see if the value is greater than, equal to, or less than the benchmark value. Based on which block is entered, the code will produce an output, either "on" or "off".
