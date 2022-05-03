@@ -446,7 +446,7 @@ In order to create a line graph with average price vs. hour, we need all the val
 
 While this condition is met, a plot with the appropriate headings, titles, and values will be created. The plot is produced at the end of the program using `plt.show()` (see **Part 7**).
 
-![Average Hourly Prices for Today](/FP_graph.png/FP_graph.png)
+![Average Hourly Prices for Today](/FP_graph.png)
 
 The last elif statement is in place in case the program runs during the hour starting at midnight. Since a full hour has not been completed yet, there are no hourly prices meaning `avg_hrly_price` is empty. In this case, we can break from this block since a graph cannot be made yet. We would need at least one average hourly price.
 
