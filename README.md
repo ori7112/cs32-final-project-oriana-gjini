@@ -114,7 +114,7 @@ The scope of the project will remain as outlined in **The Computational Subtask*
     6. With date/time for the start and end of the past hour ready, we insert them into the ComEd custom url. There should be 12 prices in the json file given by this link (12 prices since these prices are posted every 5 min for the hour).
     7. Finally, we collect all 12 prices into an array to eventually be averaged to produce an average past hour price.
 
-**Part 4** Calculate average past hour price. The array with all 12 prices for the past hour is reformatted as a list with float values (each price is rounded to one decimal place). This list goes through a function called "Average" and returns the average past hour price.
+**Part 4:** Calculate average past hour price. The array with all 12 prices for the past hour is reformatted as a list with float values (each price is rounded to one decimal place). This list goes through a function called "Average" and returns the average past hour price.
 
 **Part 5:** Collect average hourly prices for the current day.
 
