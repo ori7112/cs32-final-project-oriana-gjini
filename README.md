@@ -203,7 +203,7 @@ while True:
 
 To get the current price, we use the 5 min pricing link, opening a json file. To use the contents of this file, `json.loads(response_min.read())` returns a python dictionary from which we can index `[0]` under the key `['price']` to get the most recent value off. This gives us the most recent 5 min price.
 
-For the user's information, we `print("Current 5min price:", current_price)` and get, for instance, `Current 5min price: 4.8`.
+For the user's information, we `print("Current 5min price:", current_price)` and get, for instance, `Current 5min price: 9.5`.
 
 ### Part 3: Collecting Average Current Hour Price and Average Past Hour Price ###
 
@@ -222,7 +222,7 @@ For the user's information, we `print("Current 5min price:", current_price)` and
     print("Current hour price:", current_hr_price)
 ```
 
-These steps are identical to the code for **Part 2** except we use the current hour pricing link instead of the 5 min one. We also print the average current hour price for the user to view.
+These steps are identical to the code for **Part 2** except we use the current hour pricing link instead of the 5 min one. We also print the average current hour price for the user to view: `Current hour price: 7.4`
 
 **Step 2: Collect Average Past Hour Price**
 ```
@@ -310,14 +310,13 @@ As there are 12 prices in the json file, 1 per every 5 min, all 12 values are st
 To display each step in progress, below is an example of what the print statements return:
 
 ```
-Time in IL : 17:14:52
-1 hr before - time in ms: 1651608892261
-1 hr before - datetime from ms: 2022-05-03 16:14:52
+1 hr before - time in ms: 1651610288378
+1 hr before - datetime from ms: 2022-05-03 16:38:08
 1 hr before - hour: 16
 Start of past hour: 1651608000000
 Date start: 202205031600
-End of past hour - time in ms: 1651612492270
-End of past hour - datetime from ms: 2022-05-03 17:14:52
+End of past hour - time in ms: 1651613888392
+End of past hour - datetime from ms: 2022-05-03 17:38:08
 End of past hour - hour: 17
 End of past hour: 1651608000000
 Date end: 202205031700
@@ -339,6 +338,9 @@ Date end: 202205031700
     avg_past_hour = round(avg_past_hr_calc, 1)
     print("Avg past hr price:", avg_past_hour)
 ```
+Now that we have all our data to find the average past hour price, we first convert the array to a list of floats. Then, we create a function that returns the average of the 12 prices, rounded to 1 decimal place.
+
+We return a value such as: `Avg past hr price: 8.6`
 
 ### Part 5: Collect Average Hourly Prices for Today ###
 
