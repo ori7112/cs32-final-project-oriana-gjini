@@ -146,8 +146,10 @@ while True:
     
     # collect 5 min prices from custom link for today
     # set today's date start and date end
-    today_raw = str(date.today())
-    today = today_raw.replace('-', '')
+    tz_CT = pytz.timezone('US/Central') 
+    datetime_CT = datetime.now(tz_CT)
+    date_CT_string = (str(datetime_CT))[0:10]
+    today = date_CT_string.replace('-', '')
     today_datestart = f'{today}0000'
     today_dateend = f'{today}2355'
     print("Today Start:", today_datestart)
