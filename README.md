@@ -66,7 +66,12 @@ Clearly, there are many ways to improve and customize this concept. I hope this 
 
 ## The Computational Subtask ##
 
-My goal will be to interact with ComEd's website (https://hourlypricing.comed.com/hp-api/), retreive data from the 5 minute live pricing report through communicating back and forth from my server to theirs, store this data locally, and compare the data (as it comes in) to a threshold price. If the price exceeds the threshold value, an output message is produced which would tell the thermostat to turn off. When the price returns below the threshold price, an output message will be produced which would tell thermostat to turn on.
+My goal will be to interact with ComEd's website (https://hourlypricing.comed.com/hp-api/), retreive data from pricing reports through communicating back and forth from my server to theirs, store this data locally, and analyze the data (as it comes in) to signal a thermostat to stay/turn on or off. In addition to gathering and producing the current price, the average current hour price, and the average past hour price for the user to view, the data gathered will be visualized through a line graph tracking the changes in price by the hour for the entire day.
+
+The data used to determine what state the thermostat is in will depend on 2 main pieces of information. One, is the current price which is taken from ComEd's live 5 min pricing reports. The current price collected through the program will update every 5 min to have the most up-to-date pricing. Second, is the change in price between the average current hour price and the average past hour price. The current hour price is taken from ComEd's live hourly pricing report. The past hour average must be found manually. Through a custom link where one sets the date and time, we can get 5 min pricing reports for specific intervals of time. By keeping track of the time in Illinois (CST/CDT), we can determine when the past hour starts/end and set an algorithm to calculate averages of 12 (5 min) prices to get the hourly average. Both the current price and the change in price between the past hour versus the current hour give us two ways to assess whether it is better to turn the thermostat on or off. These respective values will be given a weight based on how much influence that information should have
+
+
+If the price exceeds the threshold value, an output message is produced which would tell the thermostat to turn off. When the price returns below the threshold price, an output message will be produced which would tell thermostat to turn on.
 
 This captures the idea of the system I previously outlined, but it is a simplified version taking one type of data and analyzing it by comparison to a threshold value. 
 
