@@ -1,4 +1,5 @@
 # CS32 Final Project - Programming a Smart Thermostat
+Created by: Oriana Gjini
 
 ## Context of the Problem ##
 
