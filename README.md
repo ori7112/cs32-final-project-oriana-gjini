@@ -136,7 +136,6 @@ The scope of the project will remain as outlined in **The Computational Subtask*
   - The final calculation adds `value_1` with `value_2`. The sum either is below 10 or at/above 10. If the sum matches the former, the thermostat is ON. The latter indicates the thermostat is OFF.
   
 ### Part 1: Webscrapping ###
-**Step 1:** Connect to URL of ComEd page.
 ```
 import requests
 import json
@@ -177,49 +176,28 @@ get_link_hour = soup.findAll('a')[43]
 link_hour = get_link_hour['href']
 ```
 The last line `print(response)` is a check to make sure the connection was successful. When running this code, we get `<Response [200]>` which means we have successfully connected.
-
-**Step 2:** Parse HTML script to locate link of interest (link contains 5 min pricing data). Then, assign the link for use in next step.
-```
-# parse HTML and locate every 'a' which find every instance
-# of '<a' which is the tag for a link
-soup = BeautifulSoup(response.text, 'html.parser')
-soup.findAll('a')
-
-# show every code line that contains a link
-print(soup.findAll('a'))
-
-# assign the line with the link we want as link_tag
-link_tag = soup.findAll('a')[33]
-
-# show link_tag to verify this line contains the link we want
-print(link_tag)
-
-# specifically assign the link by identifying it from the HTML line
-link = link_tag['href']
-
-# show the link to make sure we have the right one
-print(link)
-
-```
 This portion correctly meets the 3 print statement checkpoints. The first print `print(soup.findAll('a'))` produces every link from the website's HTML. The second print `print(link_tag)` correctly gives the HTML line that contains the link of interest. Finally, the third print `print(link)` takes the link of interest out of the HTML line. We get `https://hourlypricing.comed.com/api?type=5minutefeed&format=text` printed and this is the link we want to extract data from.
 
-**Step 3:** Open the link to the 5 min pricing data. Reproduce all the data so it is ready for analysis. The link should be opened every 5 minutes to extract the updated data.
+### Part 2: Collecting the Current Price ###
 ```
-#PLACE EVERYTHING IN A LOOP
+while True:
 
-# every 5 min start at the beginning of the loop -- use time.sleep 
+    # DATA 1 -- current price
 
-# open the link, access data, print data
-f = urlopen(link)
-myfile = f.read()
-print(myfile)
-
-# delete all data in previously created array (array should be created before loop)
-# store new data into an array
-   # data comes in a set of UTC millis and price, and should be stored accordingly
+    # open 5 min pricing link
+    response_min = urlopen(link_min)
+    # store JSON response from 5 min pricing link as data
+    pricing_min_json = json.loads(response_min.read())
+    # current price -- from 5 min pricing
+    current_price = pricing_min_json[0]['price']
+    print("Current 5min price:", current_price)
 
 ```
-Currently, the code above prints all the data from the file once. **Step 3** needs to incorporate a loop to access the link with the data every 5 min (5 min is how often the link is updated with new data). Every 5 min, the new data will go into an array for storage and any previous data will be deleted. Now that we have our necessary data stored, we will be able to analyze in **Part 2**.
+
+### Part 3: **Step 3:** Open the link to the 5 min pricing data. Reproduce all the data so it is ready for analysis. The link should be opened every 5 minutes to extract the updated data.
+```
+# everything is included in the `while True:` loop of Part 2
+```
 
 ### Part 2: Data Analysis ###
 
