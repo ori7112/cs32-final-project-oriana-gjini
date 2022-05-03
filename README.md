@@ -128,10 +128,12 @@ The scope of the project will remain as outlined in **The Computational Subtask*
   - This way, the day's average hourly price array collects the average hour price for every hour completed in the day so far. It thereby indicates how many hours have been recorded (number of prices determines should match how many hours have passed today). Another loop does this matching to ensure the number of x values (hours) matches the number of y values (prices).
   - The graph is created with a blue line, the appropriate headings, and will illustrate how the prices are changing throughout the day. Instead of just providing calculations, this graph makes it easy for the user to have a sense of how dynamically prices are fluctuating.
 
-**Part 7:** 
-  
-  - Based on the data stored of times and prices, we will do a comparison against a benchmark price. If the price is equal to or greater than the benchmark price, the output will be "off" to turn off the thermostat. If the price is below benchmark, the output will be "on", indicating the thermostat should be on.
+**Part 7:** Final Calculations to determine state of the thermostat.
 
+  - The current price is assigned a weight depending on the range in which the prices falls. Any price below 5 cents gets weighted at 1.7 times it's value. Any price including 5 and below 10 cents gets weighted at 1.3 times it's value. Any price at or above 10 cents gets weighted at 1.7 times. The reason for the weighting is that any price below 5 cents is quite low and no matter what the change in hourly price is, this price is low enough to keep the thermostat on. Likewise, if the price is at or above 10 cents, that is quite high and is the priority consideration in turning the thermostat off. Whatever the current price is, it gets weighted accordingly and becomes `value_1`.
+  - The change between average current hour price and average past hour price is calculated. This value is compared between 8 ranges. Depending on where the price falls, it gets assigned a value (0-7) with increasing weight as the slope is greater. Whatever the assigned value is, this number becomes `value_2`.
+  - The final calculation adds `value_1` with `value_2`. The sum either is below 10 or at/above 10. If the sum matches the former, the thermostat is ON. The latter indicates the thermostat is OFF.
+  
 ### Part 1: Webscrapping ###
 **Step 1:** Connect to URL of ComEd page.
 ```
