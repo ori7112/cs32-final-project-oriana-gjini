@@ -176,6 +176,7 @@ get_link_hour = soup.findAll('a')[43]
 # by identifying it from the HTML line
 link_hour = get_link_hour['href']
 ```
+
 After importing all the necessary libraries, we establish a connection to ComEd's page of pricing reports. The line `print("Response status:", check_connection)` ensures a connection to the server was successfully made. When running this code, we get `Response status: <Response [200]>` meaning the connection is established.
 
 From there, we utilize HTML from the webpage, locating all instances of an indicator '<a'. This is a tag which precedes every link on the page. Since we are looking for the live 5 min pricing link and the live average current hour pricing link, we capture every link on the page and then index to get each respective link. As seen in the code, an index of "32" corresponds to the 5 min pricing link while an index of "43" corresponds to the average current hour pricing link. Each of these links is collected starting from "href" and this gives us both links as a url, respectively as `link_min` and `link_hour`. 
@@ -199,6 +200,7 @@ while True:
     current_price = pricing_min_json[0]['price']
     print("Current 5min price:", current_price)
 ```
+
 To get the current price, we use the 5 min pricing link, opening a json file. To use the contents of this file, `json.loads(response_min.read())` returns a python dictionary from which we can index `[0]` under the key `['price']` to get the most recent value off. This gives us the most recent 5 min price.
 
 For the user's information, we `print("Current 5min price:", current_price)` and get, for instance, `Current 5min price: 4.8`.
@@ -219,6 +221,8 @@ For the user's information, we `print("Current 5min price:", current_price)` and
     current_hr_price = pricing_hour_json[0]['price']
     print("Current hour price:", current_hr_price)
 ```
+
+These steps are identical to the code for **Part 2** except we use the current hour pricing link instead of the 5 min one. We also print the average current hour price for the user to view.
 
 **Step 2: Collect Average Past Hour Price**
 ```
@@ -291,6 +295,33 @@ For the user's information, we `print("Current 5min price:", current_price)` and
         past_hour_prices.append(price_pt)
         i += 1
     print("12 prices of past hour:", past_hour_prices)
+```
+
+The first block that begins with a comment `# NOTE...` is solely present to check that the according blocks are getting the correct date/times. This block tells us the time currently in Illinois (CST/CDT). For example, `Time in IL : 17:14:52`
+
+The next block finds the time in milliseconds of 1 hour ago in CST/CDT. The two subsequent blocks convert milliseconds to datetime. Then, from the datetime format, we strip to capture just the hour. We print it, to confirm we have the correct hour (aka the start of the past hour in CST/CDT).
+
+From the full datetime, we then capture the date and just the hour. This is coverted back to milliseconds so it can be used to locate values from the json file of prices, keyed by milliseconds UTC.
+
+For both the start of the past hour (on the hour) until the end of the past hour (aka start of current hour), we reformat the date/time into YYYYMMDDHHMM. Both the `date_start` and `date_end` are inserted in line 287 to get a report of all 5 min prices from the past hour.
+
+As there are 12 prices in the json file, 1 per every 5 min, all 12 values are stored in an array `past_hour_prices`. 
+
+To display each step in progress, below is an example of what the print statements return:
+
+```
+Time in IL : 17:14:52
+1 hr before - time in ms: 1651608892261
+1 hr before - datetime from ms: 2022-05-03 16:14:52
+1 hr before - hour: 16
+Start of past hour: 1651608000000
+Date start: 202205031600
+End of past hour - time in ms: 1651612492270
+End of past hour - datetime from ms: 2022-05-03 17:14:52
+End of past hour - hour: 17
+End of past hour: 1651608000000
+Date end: 202205031700
+12 prices of past hour: ['5.5', '6.3', '9.4', '8.4', '9.1', '7.5', '13.0', '8.0', '12.9', '8.5', '7.1', '7.2']
 ```
 
 ### Part 4: Calculate Average Past Hour Price ###
