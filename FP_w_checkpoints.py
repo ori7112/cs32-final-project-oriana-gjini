@@ -224,7 +224,7 @@ while True:
         if 5 <= float(current_price) < 10:
             value_1 = float(current_price) * 1.3
         
-        if float(current_price) > 10:
+        if float(current_price) >= 10:
             value_1 = float(current_price) * 1.7
 
         break
@@ -248,7 +248,7 @@ while True:
             value_2 = 5
         if 3 <= delta_price_past_to_present_hr < 4:
             value_2 = 6
-        if delta_price_past_to_present_hr > 4:
+        if delta_price_past_to_present_hr >= 4:
             value_2 = 7
         
         break
