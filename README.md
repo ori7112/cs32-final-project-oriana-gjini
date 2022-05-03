@@ -92,13 +92,13 @@ Sources:
 
 ## Prototype Outline ##
 
-The scope of the project will remain as outlined in **The Computational Subtask**. We will have six major parts.
+The scope of the project will remain as outlined in **The Computational Subtask**. We will have seven major parts.
 
-**Part 1** is webscrapping in preparation for data collection. This is where we go to ComEd's website, identify the links of interest, open these links, so that we will be ready to extract and store the data in the next part. We will access two links on ComEd's page. One is the live 5 min pricing and the second is the live average current hour pricing.
+**Part 1:** Webscrapping in preparation for data collection. This is where we go to ComEd's website, identify the links of interest, open these links, so that we will be ready to extract and store the data in the next part. We will access two links on ComEd's page. One is the live 5 min pricing and the second is the live average current hour pricing.
 
-**Part 2** is collecting the current price. This is the first major piece of data to be used in the final calculation. We will get this information, updated every 5 min, from ComEd's live 5 min pricing link. 
+**Part 2:** Collecting the current price. This is the first major piece of data to be used in the final calculation. We will get this information, updated every 5 min, from ComEd's live 5 min pricing link. 
 
-**Part 3** is collecting the average current price and average past hour price. The change between these prices will be calculated in a following part. Part 3 is collecting all the data necessary to get the second major piece of data to be used in the final calculation. This part will be broken down into 3 steps.
+**Part 3:** Collecting the average current price and average past hour price. The change between these prices will be calculated in a following part. Part 3 is collecting all the data necessary to get the second major piece of data to be used in the final calculation. This part will be broken down into 3 steps.
 
 * Step 1: Collect average current hour price (similarly to current price) by getting data from ComEd's live average current hour pricing link. 
 
@@ -114,20 +114,21 @@ The scope of the project will remain as outlined in **The Computational Subtask*
     6. With date/time for the start and end of the past hour ready, we insert them into the ComEd custom url. There should be 12 prices in the json file given by this link (12 prices since these prices are posted every 5 min for the hour).
     7. Finally, we collect all 12 prices into an array to eventually be averaged to produce an average past hour price.
 
-* Step 3: Calculate average past hour price. The array with all 12 prices for the past hour is reformatted as a list with float values (each price is rounded to one decimal place). This list goes through a function called "Average" and returns the average past hour price.
+**Part 4** Calculate average past hour price. The array with all 12 prices for the past hour is reformatted as a list with float values (each price is rounded to one decimal place). This list goes through a function called "Average" and returns the average past hour price.
 
-* Step 4: Collect average hourly prices for current day.
+**Part 5:** Collect average hourly prices for the current day.
 
   - First, we get the date/time for CST/CDT and strip off the time to leave us with the date. Then, the dashes from the date are removed. To get YYYYMMDDHHMM format, we add in "0000" to indicate hour 0 or midnight. To get the end of the day's last 5 min price, we add "2355" to the date.
   - These date start and date ends are inserted into the custom url much like how we did this to get prices for the past hour. The only difference is that this custom url will give 288 prices by the end of the day, one for every 5 min in the 24 hours.
 
-* Step 5: Creat a line graph of today's average hourly prices. The graph will depict prices vs. hour, up to 24 hours.
+**Part 6:** Create a line graph of today's average hourly prices. The graph will depict prices vs. hour, up to 24 hours.
+
   - Because we want to create a line graph no matter what time of day it is, we create a loop that keeps adding prices from the json file given by our custom link. 
   - The prices are stored in a hourly price array. Once the array has 12 values (aka prices), we take the average and store that value (avgerage price of that hour) in to a separate array for the day's average hourly prices. This loop keeps running all day and the temporary hourly price array resets itself once it reaches 12 values.
   - This way, the day's average hourly price array collects the average hour price for every hour completed in the day so far. It thereby indicates how many hours have been recorded (number of prices determines should match how many hours have passed today). Another loop does this matching to ensure the number of x values (hours) matches the number of y values (prices).
   - The graph is created with a blue line, the appropriate headings, and will illustrate how the prices are changing throughout the day. Instead of just providing calculations, this graph makes it easy for the user to have a sense of how dynamically prices are fluctuating.
 
-* Step 6:
+**Part 7:** 
   
   - Based on the data stored of times and prices, we will do a comparison against a benchmark price. If the price is equal to or greater than the benchmark price, the output will be "off" to turn off the thermostat. If the price is below benchmark, the output will be "on", indicating the thermostat should be on.
 
