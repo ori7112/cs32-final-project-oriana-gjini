@@ -99,7 +99,7 @@ The scope of the project will remain as outlined in **The Computational Subtask*
 
 **Part 2:** Collecting the current price. This is the first major piece of data to be used in the final calculation. We will get this information, updated every 5 min, from ComEd's live 5 min pricing link. 
 
-**Part 3:** Collecting the average current price and average past hour price. The change between these prices will be calculated in a following part. Part 3 is collecting all the data necessary to get the second major piece of data to be used in the final calculation. This part will be broken down into 3 steps.
+**Part 3:** Collecting the average current hour price and average past hour price. The change between these prices will be calculated in a following part. Part 3 is collecting all the data necessary to get the second major piece of data to be used in the final calculation. This part will be broken down into 3 steps.
 
 * Step 1: Collect average current hour price (similarly to current price) by getting data from ComEd's live average current hour pricing link. 
 
@@ -194,16 +194,52 @@ while True:
 
 ```
 
-### Part 3: **Step 3:** Open the link to the 5 min pricing data. Reproduce all the data so it is ready for analysis. The link should be opened every 5 minutes to extract the updated data.
+### Part 3: Collecting Average Current Hour Price and Average Past Hour Price ###
+**Step 1: Collect Average Current Hour Price**
 ```
-# everything is included in the `while True:` loop of Part 2
+# NOTE: everything is included in the "while True:" loop at start of Part 2
+
+    # DATA 2a -- current hour avg price
+
+    # open current hour pricing link
+    response_hour = urlopen(link_hour)
+    # store JSON response from current hour pricing link as data
+    pricing_hour_json = json.loads(response_hour.read())
+    # current hour price -- from hourly current pricing
+    current_hr_price = pricing_hour_json[0]['price']
+    print("Current hour price:", current_hr_price)
+```
+**Step 2: Collect Average Past Hour Price**
+```
+    # DATA 2b -- past hour avg price
+
+    # NOTE: CHECKS DATETIME CST/CDT TO VERIFY FOLLOWING BLOCK
+    tz_CT = pytz.timezone('US/Central') 
+    datetime_CT = datetime.now(tz_CT)
+    print("Time in IL :", datetime_CT.strftime("%H:%M:%S"))
+
+    # convert current time (uses local tz aka EST/EDT) to ms
+    # subtract 2 hours to get past hour in CST/CDT
+    past_hour_rawms = int(round((time.time() * 1000)-7200000))
+    print("1 hr before - time in ms:", past_hour_rawms)
+
+    # convert start of past hour from ms to datetime
+    past_hour_datetime = datetime.fromtimestamp(round(past_hour_rawms/1000))
+    print("1 hr before - datetime from ms:", past_hour_datetime)
+
+    # get start of past hour
+    past_hour_string = str(past_hour_datetime)
+    past_hour = datetime.strptime(past_hour_string, "%Y-%m-%d %H:%M:%S")
+    print("1 hr before - hour:", past_hour.hour)
+
+    # get start of past hour in ms rounded down to the hour
+    past_hour_strpstring = past_hour_string[0:13]
+    sdt_obj = datetime.strptime(f'{past_hour_strpstring}', '%Y-%m-%d %H')
+    past_hour_ms = int(sdt_obj.timestamp() * 1000)
+    print("Start of past hour:", past_hour_ms)
 ```
 
-### Part 2: Data Analysis ###
-
-In **Part 2**, we will do comparison tests with the data we stored in **Part 1**. Specifically, every 5 min when new data comes in, we will conduct a test with a threshold price value. If the price at the most recent time recorded is *at or above* a benchmark value, the output will be "off" indicating the thermostat should be turned off. If a real thermostat was connected, this output would signal for the thermostat to be turned off automatically. If the price at the most recent time recorded is *below* a benchmark value, the output will be "on". 
-
-The code can utilize `pop` to take the last value in the array and use it in a series of if/elif/else blocks to see if the value is greater than, equal to, or less than the benchmark value. Based on which block is entered, the code will produce an output, either "on" or "off".
+### Part 4: Calculate Average Past Hour Price ###
 
 
 
