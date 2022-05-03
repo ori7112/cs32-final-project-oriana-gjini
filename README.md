@@ -68,13 +68,21 @@ Clearly, there are many ways to improve and customize this concept. I hope this 
 
 My goal will be to interact with ComEd's website (https://hourlypricing.comed.com/hp-api/), retreive data from pricing reports through communicating back and forth from my server to theirs, store this data locally, and analyze the data (as it comes in) to signal a thermostat to stay/turn on or off. In addition to gathering and producing the current price, the average current hour price, and the average past hour price for the user to view, the data gathered will be visualized through a line graph tracking the changes in price by the hour for the entire day.
 
-The data used to determine what state the thermostat is in will depend on 2 main pieces of information. One, is the current price which is taken from ComEd's live 5 min pricing reports. The current price collected by our code will update every 5 min to have the most up-to-date pricing. Second, is the change in price between the average current hour price and the average past hour price. The current hour price is taken from ComEd's live hourly pricing report. The past hour average must be calculated manually. Through a custom link where one sets the date and time, we can get 5 min pricing reports for specific intervals of time. By keeping track of the time in Illinois (CST/CDT), we can determine when the past hour starts/end and set an algorithm to calculate averages of 12 (5 min) prices to get the hourly average. Both the current price and the change in price between the past hour versus the current hour give us two factors to consider when assessing whether it is better to turn the thermostat on or off. These respective values will also be weighted based on how influential that information should be in determining the state of the thermostat. The 2 weighted values will ultimately be added together. The final score will be judged on a range, so depending on where the score lies, this will indicate a response of "Thermostat Is: ON" or "Thermostat Is: OFF".
+The data used to determine what state the thermostat is in will depend on 2 main pieces of information.
 
-Besides giving the user information on where the price is at and how it has changed over time, we will also help visualize this through a line graph. Each day average hourly prices are continually stored in order to produce a line graph that depicts prices over time. It is a convenient way for the user to see how significantly the prices are changing, if they tend to be rising/droping, and may assist in predicting where the prices seem to be going.
+* One, is the current price which is taken from ComEd's live 5 min pricing reports. The current price collected by our code will update every 5 min to have the most up-to-date pricing. 
+* Second, is the change in price between the average current hour price and the average past hour price. 
+  - The current hour price is taken from ComEd's live hourly pricing report. 
+  - The past hour average must be calculated manually. 
+  - Through a custom link where one sets the date and time, we can get 5 min pricing reports for specific intervals of time. By keeping track of the time in Illinois (CST/CDT), we can determine when the past hour starts/end and set an algorithm to calculate averages of 12 (5 min) prices to get the hourly average. 
+ 
+Both the **current price** and the **change in price between the past hour versus the current hour** provide two factors to consider when assessing whether it is better to turn the thermostat on or off. These respective values will also be weighted based on how influential that information should be in determining the state of the thermostat. The 2 weighted values will ultimately be added together. The final score will be judged on a range, so depending on where the score lies, this will indicate a response of "THERMOSTAT IS: ON" or "THERMOSTAT IS: OFF".
+
+Besides giving the user information on where the price is at, how it has changed over time, and giving an output after analyzing both types of data, we will also help visualize the prices through a line graph. Each day, average hourly prices are continually stored in order to produce a line graph that depicts prices over time. Every hour's average prices is plotted, eventually producing a 24 hour graph of how the prices changed throughout the day. It is a convenient way for the user to see how significantly the prices are changing, if they tend to be rising/droping, and may assist in predicting where the prices seem to be going.
 
 In the end, my hope is that the scale of the project should challenge me in a variety of areas. I will have to webscrap, store data (e.g. dictionaries, arrays, lists), covert between the different objects, communicate with servers, utilize json files, convert HTML to python, create algorithms, carefully construct looping structures, monitor time, convert dates/times between timezones and milliseconds, create a line graph, and have the program run on a timed system which monitors itself.
 
-I hope that this scale of the project will capture the potential of a program that can utilize data to help us be better energy consumers by the simple, but powerful, method of predicting when to turn one's thermostat on or off.
+Looking to the future, I hope that the scale of this project will capture the potential of a program that can utilize data to help us be better energy consumers by the simple, but powerful, method of predicting when to turn one's thermostat on or off.
 
 Sources:
 
@@ -84,24 +92,67 @@ Sources:
 
 ## Prototype Outline ##
 
-The scope of the project will remain as outlined in **The Computational Subtask**. We will have two major parts. **Part 1** is webscrapping, data collection, and data storage. This is where we go to ComEd's website, identify the link of interest, open this link, extract the data, and store the data. We will store a data for what the price of electricity is at what time. Then, **Part 2** is analysis of data and outputing on/off result. Based on the data stored of times and prices, we will do a comparison against a benchmark price. If the price is equal to or greater than the benchmark price, the output will be "off" to turn off the thermostat. If the price is below benchmark, the output will be "on", indicating the thermostat should be on.
+The scope of the project will remain as outlined in **The Computational Subtask**. We will have five major parts.
+
+**Part 1** is webscrapping in preparation for data collection. This is where we go to ComEd's website, identify the links of interest, open these links, so that we will be ready to extract and store the data in the next part. We will access two links on ComEd's page. One is the live 5 min pricing and the second is the live average current hour pricing.
+
+**Part 2** is collecting the current price. This is the first major piece of data to be used in the final calculation. We will get this information, updated every 5 min, from ComEd's live 5 min pricing link. 
+
+**Part 3** is collecting the average current price and average past hour price. The change between these prices will be calculated in a following part. Part 3 is collecting all the data necessary to get the second major piece of data to be used in the final calculation. This part will be broken down into 3 steps.
+* Step 1: Collect average current hour price (similarly to current price) by getting data from ComEd's live average current hour pricing link. 
+* Step 2: Collect past hour prices by gathering 12 prices (each posted at 5 min intervals for the hour), utilizing a custom url. One of the reports ComEd can provide is given by a link that will open a json file with prices for a set start and end date/time. In the url, one must provide the start and end date/time in a specific format. Before we can use this link, we have to determine what the start and end date/time is. 
+  - Because ComEd operates only in Northern Illinois, it makes sense to base date/time in CST/CDT. Since we are in EDT, we have to covert the current date/time to match CST/CDT. We can do this a few substeps.
+    - 1. Get current date/time (EDT) in milliseconds and subtract two hours. Subtracting 1 hour gives us the current date/time in CDT. Subtracting a second hour gives us the past hour in CDT.
+    - 2. Covert past hour date/time (CDT) to a datetime format. The reason for this is because ComEd's pricing reports are json files which are refereced by milliseconds UTC and because we need to recognize 5 min or hourly intervals of time, any date/time we use needs to be rounded. Specifically, since we are looking for the start and end of the past hour, we need to have the date/time we already got, rounded down to the hour. Right now, the raw date/time has hour, minutes, and seconds. We only want the hour.
+    - 3. Once we have the date/time in a datetime format, we strip off the minutes and seconds. We are now ready to convert the date/time back to milliseconds.
+    - 4. Convert date/time indicating start of the past hour (on the hour) to milliseconds. Because datetime format uses dashes and colons, we have to replace them by removing them. Additionally, numbers for hours and minutes must be added to the datetime since ComEd needs the date start and date end to be in YYYYMMDDHHMM.
+    - 5. Repeat substeps 1-4 to get date/time for the end of the past hour. The only difference is that in substep 1, we only subtract 1 hour (not 2) since the end of the past hour is the start of the current hour.
+    - 6. With date/time for the start and end of the past hour ready, we insert them into the ComEd custom url. There should be 12 prices in the json file given by this link (12 prices since these prices are posted every 5 min for the hour).
+    - 7. Finally, we collect all 12 prices into an array to eventually be averaged to produce an average past hour price.
+* Step 3: Calculate average past hour price. The array with all 12 prices for the past hour is reformatted as a list with float values (each price is rounded to one decimal place). This list goes through a function called "Average" and
+  
+  - Based on the data stored of times and prices, we will do a comparison against a benchmark price. If the price is equal to or greater than the benchmark price, the output will be "off" to turn off the thermostat. If the price is below benchmark, the output will be "on", indicating the thermostat should be on.
 
 ### Part 1: Webscrapping ###
 **Step 1:** Connect to URL of ComEd page.
 ```
 import requests
-import urllib.request
+import json
+import matplotlib.pyplot as plt
+import pytz
 import time
+import urllib.request 
+
 from bs4 import BeautifulSoup
+from datetime import date
+from datetime import datetime
+from urllib.request import urlopen
 
 # designate website to collect data from
 url = 'https://hourlypricing.comed.com/hp-api/'
 
-# establish connection to website
-response = requests.get(url)
+# establish connection to website & check for 'response 200'
+check_connection = requests.get(url)
+print("Response status:", check_connection) 
 
-# check that we get 'response 200' to ensure successful connection
-print(response) 
+# parse HTML and locate every 'a' which find every instance
+# of '<a' which is the tag for a link
+soup = BeautifulSoup(check_connection.text, 'html.parser')
+soup.findAll('a')
+
+# assign the line with the 5 min pricing link
+get_link_min = soup.findAll('a')[32]
+
+# specifically assign the 5 min pricing link
+# by identifying it from the HTML line
+link_min = get_link_min['href']
+
+# assign the line with the current hour price link
+get_link_hour = soup.findAll('a')[43]
+
+# specifically assign the current hour pricing link
+# by identifying it from the HTML line
+link_hour = get_link_hour['href']
 ```
 The last line `print(response)` is a check to make sure the connection was successful. When running this code, we get `<Response [200]>` which means we have successfully connected.
 
