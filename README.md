@@ -511,6 +511,10 @@ The last elif statement is in place in case the program runs during the hour sta
     break
 ```
 
+As each block is labeled by the comment preceding it, the first block is simply a comparison test against set prices. Depending on where the current price falls in the 3 ranges, it will be mulitplied by a certain value (1.3 or 1.7). The second block calculates the change in hourly price. This slope can fall within 8 ranges. Depending on which range the slope corresponds to, we get a value (0-7). These 2 values are respectively `value_1` and `value_2`. They are summed in the third block and based on whether the sum is below or at/above 10 cents, we get a response either that the thermostat is ON or OFF.
+
+Based on the prices I've used as example data, we would get a `THERMOSTAT IS: OFF` as the final print statement.
+
 ## Concluding Thoughts ##
 
 The intention of taking two types of input (current price and slope between current and past hour prices) is to begin emulating the importance of factoring in multiple types of data. Using some basic algorithms and calculations also begins to demonstrate the importance of effective analysis of data. While the calculations used are not terribly sophisticated and the weighing system is not supported by much data other than my personal experience of how the pricing tends to work, I believe working with calculations revealed to me how powerful they can be. Additionally, I realized that creating an algorithm that accurately makes sense of data and uses it effectively is very tricky. It takes a lot of consideration, research, and trial and error. 
