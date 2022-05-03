@@ -196,6 +196,7 @@ while True:
 ```
 
 ### Part 3: Collecting Average Current Hour Price and Average Past Hour Price ###
+
 **Step 1: Collect Average Current Hour Price**
 ```
 # NOTE: everything is included in the "while True:" loop at start of Part 2
@@ -210,6 +211,7 @@ while True:
     current_hr_price = pricing_hour_json[0]['price']
     print("Current hour price:", current_hr_price)
 ```
+
 **Step 2: Collect Average Past Hour Price**
 ```
 # NOTE: everything is included in the "while True:" loop at start of Part 2
