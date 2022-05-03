@@ -117,7 +117,7 @@ The scope of the project will remain as outlined in **The Computational Subtask*
 
 **Part 4:** Calculate average past hour price. The array with all 12 prices for the past hour is reformatted as a list with float values (each price is rounded to one decimal place). This list goes through a function called "Average" and returns the average past hour price.
 
-**Part 5:** Collect average hourly prices for the current day.
+**Part 5:** Collect average hourly prices for today.
 
   - First, we get the date/time for CST/CDT and strip off the time to leave us with the date. Then, the dashes from the date are removed. To get YYYYMMDDHHMM format, we add in "0000" to indicate hour 0 or midnight. To get the end of the day's last 5 min price, we add "2355" to the date.
   - These date start and date ends are inserted into the custom url much like how we did this to get prices for the past hour. The only difference is that this custom url will give 288 prices by the end of the day, one for every 5 min in the 24 hours.
@@ -136,6 +136,7 @@ The scope of the project will remain as outlined in **The Computational Subtask*
   - The final calculation adds `value_1` with `value_2`. The sum either is below 10 or at/above 10. If the sum matches the former, the thermostat is ON. The latter indicates the thermostat is OFF.
   
 ### Part 1: Webscrapping ###
+
 ```
 import requests
 import json
@@ -179,6 +180,7 @@ The last line `print(response)` is a check to make sure the connection was succe
 This portion correctly meets the 3 print statement checkpoints. The first print `print(soup.findAll('a'))` produces every link from the website's HTML. The second print `print(link_tag)` correctly gives the HTML line that contains the link of interest. Finally, the third print `print(link)` takes the link of interest out of the HTML line. We get `https://hourlypricing.comed.com/api?type=5minutefeed&format=text` printed and this is the link we want to extract data from.
 
 ### Part 2: Collecting the Current Price ###
+
 ```
 while True:
 
@@ -191,7 +193,6 @@ while True:
     # current price -- from 5 min pricing
     current_price = pricing_min_json[0]['price']
     print("Current 5min price:", current_price)
-
 ```
 
 ### Part 3: Collecting Average Current Hour Price and Average Past Hour Price ###
@@ -211,6 +212,8 @@ while True:
 ```
 **Step 2: Collect Average Past Hour Price**
 ```
+# NOTE: everything is included in the "while True:" loop at start of Part 2
+
     # DATA 2b -- past hour avg price
 
     # NOTE: CHECKS DATETIME CST/CDT TO VERIFY FOLLOWING BLOCK
@@ -237,10 +240,211 @@ while True:
     sdt_obj = datetime.strptime(f'{past_hour_strpstring}', '%Y-%m-%d %H')
     past_hour_ms = int(sdt_obj.timestamp() * 1000)
     print("Start of past hour:", past_hour_ms)
+    
+    # get prices from 5 min pricing from start of past hour 
+    # until start of current hour's price
+
+    # get datetime start of past hour into correct format
+    date_start_edit1 = past_hour_strpstring.replace('-', '')
+    date_start_edit2 = date_start_edit1.replace(' ', '')
+    date_start = f'{date_start_edit2}00'
+    print("Date start:", date_start)
+
+    # get end of past hour (same steps as getting start of past hour)
+    end_of_past_hour_rawms = int(round((time.time() * 1000)-3600000))
+    print("End of past hour - time in ms:", end_of_past_hour_rawms)
+    end_of_past_hour_datetime = datetime.fromtimestamp(round(end_of_past_hour_rawms/1000))
+    print("End of past hour - datetime from ms:", end_of_past_hour_datetime)
+    end_of_past_hour_string = str(end_of_past_hour_datetime)
+    end_of_past_hour = datetime.strptime(end_of_past_hour_string, "%Y-%m-%d %H:%M:%S")
+    print("End of past hour - hour:", end_of_past_hour.hour)
+    end_of_past_hour_strpstring = end_of_past_hour_string[0:13]
+    edt_obj = datetime.strptime(f'{past_hour_strpstring}', '%Y-%m-%d %H')
+    end_of_past_hour_ms = int(edt_obj.timestamp() * 1000)
+    print("End of past hour:", end_of_past_hour_ms)
+
+    # get datetime end of past hour into correct format
+    date_end_edit1 = end_of_past_hour_strpstring.replace('-', '')
+    date_end_edit2 = date_end_edit1.replace(' ', '')
+    date_end = f'{date_end_edit2}00'
+    print("Date end:", date_end)
+    
+    # custom url for 12, 5 min prices from past hour
+    get_url_past_hour= urllib.request.urlopen(f'https://hourlypricing.comed.com/api?type=5minutefeed&datestart={date_start}&dateend={date_end}')
+    pricing_past_hour_json = json.loads(get_url_past_hour.read())
+
+    # collect 12, 5 min prices from past hour into array
+    past_hour_prices = []
+    i = 0
+    while i < 12:
+        price_pt = pricing_past_hour_json[i]['price']
+        past_hour_prices.append(price_pt)
+        i += 1
+    print("12 prices of past hour:", past_hour_prices)
 ```
 
 ### Part 4: Calculate Average Past Hour Price ###
 
+```
+# NOTE: everything is included in the "while True:" loop at start of Part 2
 
+# reformat to a list of float values
+    past_hour_price_list = [float(i) for i in past_hour_prices]
+
+    # take average of 12 prices to get avg past hour price
+    def Average(past_hour_price_list):
+        return sum(past_hour_price_list) / 12
+    avg_past_hr_calc = Average(past_hour_price_list)
+    avg_past_hour = round(avg_past_hr_calc, 1)
+    print("Avg past hr price:", avg_past_hour)
+```
+
+### Part 5: Collect Average Hourly Prices for Today ###
+
+```
+# NOTE: everything is included in the "while True:" loop at start of Part 2
+
+    # Gather pricing data to create a line graph
+
+    # collect 5 min prices from custom link for today
+    # set today's date start and date end
+    tz_CT = pytz.timezone('US/Central') 
+    datetime_CT = datetime.now(tz_CT)
+    date_CT_string = (str(datetime_CT))[0:10]
+    today = date_CT_string.replace('-', '')
+    today_datestart = f'{today}0000'
+    today_dateend = f'{today}2355'
+    print("Today Start:", today_datestart)
+    print("Today End:", today_dateend)
+
+    # use today's date start & end to get all prices for the day so far
+    get_url_today  = urllib.request.urlopen(f'https://hourlypricing.comed.com/api?type=5minutefeed&datestart={today_datestart}&dateend={today_dateend}')
+    # NOTE: USE BELOW AS TEST FOR ONE EXTREME: 24 hours of data. Uncomment line below and comment the line above.
+    #get_url_today  = urllib.request.urlopen('https://hourlypricing.comed.com/api?type=5minutefeed&datestart=202205020000&dateend=202205022355')
+    today_prices_json = json.loads(get_url_today.read())
+
+    # capture 5 min prices in sets of 12 up until last full hour
+    hrly_price = []
+    avg_hrly_price = []
+    i = 0
+    while i < 288:
+        if i >= len(today_prices_json):
+            break
+        
+        if i < len(today_prices_json) :
+            price_of_hour = today_prices_json[i]['price']
+            hrly_price.append(price_of_hour)
+            i += 1
+
+        if len(hrly_price) == 12:
+            hrly_price_list = [float(i) for i in hrly_price]
+            def Average(hrly_price_list):
+                return sum(hrly_price_list) / 12
+            avg_hour_calc = Average(hrly_price_list)
+            avg_hour_price = round(avg_hour_calc, 1)
+            avg_hrly_price.append(avg_hour_price)
+            hrly_price.clear()
+
+        else:
+            pass
+```
+
+### Part 6: Create a Line Graph of Today's Average Hourly Prices ###
+
+```
+# NOTE: everything is included in the "while True:" loop at start of Part 2
+
+  # create line graph depicting hrly prices of the day
+    hour = []
+    j = len(avg_hrly_price)
+    k = 0
+    while True:
+        if j in range(0,25):
+            # append numbers as hours using k as counter
+            # k < j since current hour isn't calculated yet
+            # and we want number of x values equal to y values
+            while k < j:
+                hour.append(k)
+                k += 1
+            
+            # produce line graph
+            if k >= j:
+                plt.plot(hour, avg_hrly_price, color='blue', marker='o')
+                plt.title('Average Hourly Prices Today', fontsize=12)
+                plt.xlabel('Hour', fontsize=12)
+                plt.ylabel('Average Price', fontsize=12)
+                plt.grid(True)
+                break
+            
+            # if during the hour starting at midnight
+            # there is no avg hrly price yet so
+            # waiting at 5 min intervals before checking for
+            # 1st avg hrly price
+            elif j is None:
+                break
+```
+
+### Part 7: Final Calculations to Determine State of the Thermostat ###
+
+```
+# NOTE: everything is included in the "while True:" loop at start of Part 2
+
+    # comparison test & applying weight -- current price
+    while True:
+        if float(current_price) < 5:
+            value_1 = float(current_price) * 1.7
+            
+        if 5 <= float(current_price) < 10:
+            value_1 = float(current_price) * 1.3
+        
+        if float(current_price) >= 10:
+            value_1 = float(current_price) * 1.7
+
+        break
+            
+    # block for comparison test of delta (past hour price & current hour price)
+    while True:
+
+        delta_price_past_to_present_hr = float(avg_past_hour) - float(current_hr_price)
+        
+        if delta_price_past_to_present_hr < -5:
+            value_2 = 0
+        if -5 <= delta_price_past_to_present_hr < -3:
+            value_2 = 1
+        if -3 <= delta_price_past_to_present_hr < 0:
+            value_2 = 2
+        if 0 <= delta_price_past_to_present_hr < 1:
+            value_2 = 3
+        if 1 <= delta_price_past_to_present_hr < 2:
+            value_2 = 4
+        if 2 <= delta_price_past_to_present_hr < 3:
+            value_2 = 5
+        if 3 <= delta_price_past_to_present_hr < 4:
+            value_2 = 6
+        if delta_price_past_to_present_hr >= 4:
+            value_2 = 7
+        
+        break
+
+    # final product -- return whether thermostat should remain/be turned
+    # on or off based on current price and change in price from past to current hour
+    while True:
+
+        final_calculation = value_1 + value_2
+
+        if final_calculation < 10:
+            print("THERMOSTAT IS: ON")
+            
+        if final_calculation >= 10:
+            print ("THERMOSTAT IS: OFF")
+            
+        plt.show()
+        break
+
+    # NOTE: REPLACE WITH time.sleep(300)
+    break
+```
+
+## Concluding Thoughts ##
 
 The intention of taking two types of input (current price and slope between current and past hour prices) is to begin emulating the importance of factoring in multiple types of data. Using some basic algorithms and calculations also begins to demonstrate the importance of effective analysis of data. While the calculations used are not terribly sophisticated and the weighing system is not supported by much data other than my personal experience of how the pricing tends to work, I believe working with calculations revealed to me how powerful they can be. Additionally, I realized that creating an algorithm that accurately makes sense of data and uses it effectively is very tricky. It takes a lot of consideration, research, and trial and error. 
