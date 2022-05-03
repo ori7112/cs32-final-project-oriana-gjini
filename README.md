@@ -405,7 +405,7 @@ Today End: 202205032355
 
 Throughout the day, as prices comes in starting with the first price from midnight, they are first appended to `hrly_price`. Once the array contains 12 prices (signaling 1 hour of prices has been recorded), these values are averaged and the returned value for average hour price is stored in `avg_hrly_price`. The array `hrly_prices` is cleared and the process starts once again. Every hour's average price for the day will be recorded.
 
-*Note: I noticed later that, ideally, I should have provided code so that `avg_hrly_price` clears and resets by the end of the day. This way the user doesn't have the restart the entire program once every day.
+*Note: I noticed later that, ideally, I should have provided code so that `avg_hrly_price` clears and resets by the end of the day. This way the user doesn't have the restart the entire program once every day.*
 
 ### Part 6: Create a Line Graph of Today's Average Hourly Prices ###
 
@@ -441,6 +441,14 @@ Throughout the day, as prices comes in starting with the first price from midnig
             elif j is None:
                 break
 ```
+
+In order to create a line graph with average price vs. hour, we need all the values for average prices and all values for hours. We already have `avg_hrly_price` which contains every average hourly price for the day so far. Since the number of values for prices depends on the time of day, we cannot preset the number of hours that should go on this graph. What we can do is use the number of values in `avg_hrly_price` to dictate how many hours (starting from "0") should be appended to `hour`. Naturally, however many hourly prices we have should correspond to number of hours recorded.
+
+While this condition is met, a plot with the appropriate headings, titles, and values will be created. The plot is produced at the end of the program using `plt.show()` (see **Part 7**).
+
+![Alt text](Image URL)
+
+The last elif statement is in place in case the program runs during the hour starting at midnight. Since a full hour has not been completed yet, there are no hourly prices meaning `avg_hrly_price` is empty. In this case, we can break from this block since a graph cannot be made yet. We would need at least one average hourly price.
 
 ### Part 7: Final Calculations to Determine State of the Thermostat ###
 
