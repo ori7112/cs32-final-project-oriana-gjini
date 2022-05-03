@@ -2,7 +2,7 @@
 
 ## Context of the Problem ##
 
-The idea for this project came out of a longtime challenge my family has wrestled with. Like many households, we have AC supplied by a local energy provider. We live in Northern Illinois where ComEd is the prominent energy provider. ComEd is a unit of the Chicago-based Exelon Corporation: the largest electric utility in Illinois<sup>1</sup>. For my area code and many nearby, ComEd is the main energy provider.
+The idea for this project came out of a situation my family often discusses. Like many households, we have AC supplied by a local energy provider. We live in Northern Illinois where ComEd is the prominent energy provider. ComEd is a unit of the Chicago-based Exelon Corporation: the largest electric utility in Illinois<sup>1</sup>. For my area code and many nearby, ComEd is the main energy provider.
 
 Like any energy provider, ComEd is concerned about maintaining their electrical grid. They make a commitment to customers that they will supply energy whenever needed. However when high loads on the grid occur, ComEd must find ways to lower the load (lower energy usage) or else the grid will be overloaded and nobody will be able to receive electricity.
 
@@ -25,7 +25,7 @@ ComEd's hourly pricing rate is meant to incentivize saving energy by giving cust
 
 My family was part of the program for many years, but it was difficult to keep monitoring prices and adjusting the thermostat as necessary. In the summer, before running the AC or running any high-energy consuming appliance/task, we would check the current pricing and the pricing predictions for the the upcoming hours. We would accordingly adjust our usage of electricity. Despite our efforts to follow the load trends, we could not overcome one detail of the hourly pricing rate plan. ComEd chooses a small selection of hours from the hottest days of the year, tracks your electricity usage from those hours, and creates a coefficient applied to your pricing on every monthly bill.
 
-The idea is to encourage customers to lower energy usage during peak load times. To avoid a large coefficient to your energy bill, you'd like to avoid using electricity as much as possible during these peak times. The issue is, how does one predict these hours ComEd uses to calculate the coefficient? The other option is to constantly keep an eye on the latest pricing updates every 5 minutes but that is quite unreasonable.
+The idea is to encourage customers to lower energy usage during peak load times. To avoid a large coefficient to your energy bill, you'd like to avoid using electricity as much as possible during these peak times. The issue is, how does one predict these hours ComEd uses to calculate the coefficient? The other option would be to constantly keep an eye on the latest pricing updates every 5 minutes, but that is quite unreasonable.
 
 ComEd's initiative is to save energy just as many people also try to be energy conscientious. While the hourly pricing program is theoretically made to reward saving energy, the introduction of significant coefficents created based on just a few hours from the peak load times has deincentivized the program because, despite good energy habits, a handful of hours from the hottest days when nearly everybody has the AC on determines your pricing for the entire year.
 
