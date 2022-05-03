@@ -135,7 +135,9 @@ while True:
     # NOTE: USE BELOW AS TEST FOR ONE EXTREME: 24 hours of data
     #get_url_today  = urllib.request.urlopen('https://hourlypricing.comed.com/api?type=5minutefeed&datestart=202205020000&dateend=202205022355')
     today_prices_json = json.loads(get_url_today.read())
-
+    
+    # Gather pricing data to create a line graph
+    
     # capture 5 min prices in sets of 12 up until last full hour
     hrly_price = []
     avg_hrly_price = []
