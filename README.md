@@ -198,6 +198,9 @@ while True:
     current_price = pricing_min_json[0]['price']
     print("Current 5min price:", current_price)
 ```
+To get the current price, we use the 5 min pricing link, opening a json file. To use the contents of this file, `json.loads(response_min.read())` returns a python dictionary from which we can index `[0]` under the key `['price']` to get the most recent value off. This gives us the most recent 5 min price.
+
+For the user's information, we `print("Current 5min price:", current_price)` and get, for instance, `Current 5min price: 4.8`.
 
 ### Part 3: Collecting Average Current Hour Price and Average Past Hour Price ###
 
