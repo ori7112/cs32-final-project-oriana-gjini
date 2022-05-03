@@ -392,6 +392,21 @@ We return a value such as: `Avg past hr price: 8.6`
             pass
 ```
 
+Before continuing with calculations using the data we've collected so far, we also want to create a graph of the average prices per hour for the current day. To do this, we identify the current time in Illinois. By just capturing the date, we remove the dashes and attatch `0000` in HHMM format to the end of the date making this the start time (aka midnight of the current day). We also want an end time, so we get the last 5 min price which would be 5 min before midnight of the upcoming day. We indicated this by attaching `2355` in HHMM format to the end of the date.
+
+Similarly to previous parts, the `today_datestart` and `today_dateend` are inserted into the custom link to get all prices for the current day. Even if the current day isn't over, we get as many prices as have been reported in the day so far. Again, these prices are posted every 5 min, so by the end of the day, there should be 288 prices in the file.
+
+An example of the datestarts and dateends: 
+
+```
+Today Start: 202205030000
+Today End: 202205032355
+```
+
+Throughout the day, as prices comes in starting with the first price from midnight, they are first appended to `hrly_price`. Once the array contains 12 prices (signaling 1 hour of prices has been recorded), these values are averaged and the returned value for average hour price is stored in `avg_hrly_price`. The array `hrly_prices` is cleared and the process starts once again. Every hour's average price for the day will be recorded.
+
+*Note: I noticed later that, ideally, I should have provided code so that `avg_hrly_price` clears and resets by the end of the day. This way the user doesn't have the restart the entire program once every day.
+
 ### Part 6: Create a Line Graph of Today's Average Hourly Prices ###
 
 ```
