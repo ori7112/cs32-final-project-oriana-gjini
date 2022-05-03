@@ -1,3 +1,8 @@
+# This version utilizes print statements throughout
+# as checkpoints to display what the code is doing.
+# It is easier to understand how each block works
+# and what steps were needed to accomplish subtasks.
+
 import requests
 import json
 import matplotlib.pyplot as plt
