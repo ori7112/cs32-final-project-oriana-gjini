@@ -142,6 +142,8 @@ while True:
     avg_past_hour = round(avg_past_hr_calc, 1)
     print("Avg past hr price:", avg_past_hour)
 
+    # Gather pricing data to create a line graph
+    
     # collect 5 min prices from custom link for today
     # set today's date start and date end
     today_raw = str(date.today())
