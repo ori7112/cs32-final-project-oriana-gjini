@@ -176,8 +176,12 @@ get_link_hour = soup.findAll('a')[43]
 # by identifying it from the HTML line
 link_hour = get_link_hour['href']
 ```
-The last line `print(response)` is a check to make sure the connection was successful. When running this code, we get `<Response [200]>` which means we have successfully connected.
-This portion correctly meets the 3 print statement checkpoints. The first print `print(soup.findAll('a'))` produces every link from the website's HTML. The second print `print(link_tag)` correctly gives the HTML line that contains the link of interest. Finally, the third print `print(link)` takes the link of interest out of the HTML line. We get `https://hourlypricing.comed.com/api?type=5minutefeed&format=text` printed and this is the link we want to extract data from.
+After importing all the necessary libraries, we establish a connection to ComEd's page of pricing reports. The line `print("Response status:", check_connection)` ensures a connection to the server was successfully made. When running this code, we get `Response status: <Response [200]>` meaning the connection is established.
+
+From there, we utilize HTML from the webpage, locating all instances of an indicator '<a'. This is a tag which precedes every link on the page. Since we are looking for the live 5 min pricing link and the live average current hour pricing link, we capture every link on the page and then index to get each respective link. As seen in the code, an index of "32" corresponds to the 5 min pricing link while an index of "43" corresponds to the average current hour pricing link. Each of these links is collected starting from "href" and this gives us both links as a url, respectively as `link_min` and `link_hour`. 
+
+When printing `link_min` we get the appropriate link: https://hourlypricing.comed.com/api?type=5minutefeed
+When printing `link_hour` we also get the correct link: https://hourlypricing.comed.com/api?type=currenthouraverage
 
 ### Part 2: Collecting the Current Price ###
 
